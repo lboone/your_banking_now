@@ -222,6 +222,22 @@ declare interface SidebarProps {
   user: User;
 }
 
+declare interface SiteLogoProps {
+  linkClassName: string;
+  imageClassName?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  labelClassName: string;
+}
+
+declare interface SiteFormFieldProps {
+  form: UseFormReturn<any>;
+  fieldName: string;
+  fieldLabel: string;
+  inputType: string;
+  inputPlaceholder: string;
+}
+
 declare interface RecentTransactionsProps {
   accounts: Account[];
   transactions: Transaction[];
