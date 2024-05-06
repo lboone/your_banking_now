@@ -11,25 +11,33 @@ import { Form } from "@/components/ui/form";
 import SiteFormField from "./SiteFormField";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-const authFormSchema = (type: string) => z.object({
-  // Sign Up
-  firstName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  lastName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  address1: type === 'sign-in' ? z.string().optional() : z.string().max(50),
-  state: type === 'sign-in' ? z.string().optional() : z.string().length(2),
-  postalCode: type === 'sign-in' ? z.string().optional() : z.string().min(3).max(6),
-  dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().date(),
-  ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+import { signIn, signUp } from "@/lib/actions/user.actions";
 
-  // Both
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+const authFormSchema = (type: string) =>
+  z.object({
+    // Sign Up
+    firstName: type === "sign-in" ? z.string().optional() : z.string().min(3),
+    lastName: type === "sign-in" ? z.string().optional() : z.string().min(3),
+    address1: type === "sign-in" ? z.string().optional() : z.string().max(50),
+    state: type === "sign-in" ? z.string().optional() : z.string().length(2),
+    city: type === "sign-in" ? z.string().optional() : z.string().min(3),
+    postalCode:
+      type === "sign-in" ? z.string().optional() : z.string().min(3).max(6),
+    dateOfBirth: type === "sign-in" ? z.string().optional() : z.string().date(),
+    ssn: type === "sign-in" ? z.string().optional() : z.string().min(3),
+
+    // Both
+    email: z.string().email(),
+    password: z.string().min(8),
+  });
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const [user, setuser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
 
   const formSchema = authFormSchema(type);
 
@@ -41,6 +49,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
       lastName: "",
       address1: "",
       state: "",
+      city: "",
       postalCode: "",
       dateOfBirth: "",
       ssn: "",
@@ -50,13 +59,34 @@ const AuthForm = ({ type }: AuthFormProps) => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
-  }
+    try {
+      // Sign up with Appwrite and create plaid token
+      if (type === "sign-up") {
+        const newUser = await signUp(data);
+        setuser(newUser);
+      }
+
+      if (type === "sign-in") {
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+        console.log(response);
+        
+        if (response) {
+          router.push("/");
+        }
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section className="auth-form">
@@ -82,26 +112,24 @@ const AuthForm = ({ type }: AuthFormProps) => {
         <>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {type === 'sign-up' && (
+              {type === "sign-up" && (
                 <>
                   <div className="flex gap-4">
-                  <SiteFormField
-                    form={form}
-                    fieldName="firstName"
-                    fieldLabel="First Name"
-                    inputType="text"
-                    inputPlaceholder="Enter your first name"
-                  />
-
-                  <SiteFormField
-                    form={form}
-                    fieldName="lastName"
-                    fieldLabel="Last Name"
-                    inputType="text"
-                    inputPlaceholder="Enter your last name"
-                  />
+                    <SiteFormField
+                      form={form}
+                      fieldName="firstName"
+                      fieldLabel="First Name"
+                      inputType="text"
+                      inputPlaceholder="Enter your first name"
+                    />
+                    <SiteFormField
+                      form={form}
+                      fieldName="lastName"
+                      fieldLabel="Last Name"
+                      inputType="text"
+                      inputPlaceholder="Enter your last name"
+                    />
                   </div>
-
 
                   <SiteFormField
                     form={form}
@@ -110,42 +138,49 @@ const AuthForm = ({ type }: AuthFormProps) => {
                     inputType="text"
                     inputPlaceholder="Enter your address"
                   />
+
+                  <SiteFormField
+                    form={form}
+                    fieldName="city"
+                    fieldLabel="City"
+                    inputType="text"
+                    inputPlaceholder="Enter your city"
+                  />
                   <div className="flex gap-4">
-                  <SiteFormField
-                    form={form}
-                    fieldName="state"
-                    fieldLabel="State"
-                    inputType="text"
-                    inputPlaceholder="ex: NY"
-                  />
+                    <SiteFormField
+                      form={form}
+                      fieldName="state"
+                      fieldLabel="State"
+                      inputType="text"
+                      inputPlaceholder="ex: NY"
+                    />
 
-                  <SiteFormField
-                    form={form}
-                    fieldName="postalCode"
-                    fieldLabel="Postal Code"
-                    inputType="text"
-                    inputPlaceholder="ex: 11101"
-                  />
+                    <SiteFormField
+                      form={form}
+                      fieldName="postalCode"
+                      fieldLabel="Postal Code"
+                      inputType="text"
+                      inputPlaceholder="ex: 11101"
+                    />
                   </div>
-                 <div className="flex gap-4">
-                 <SiteFormField
-                    form={form}
-                    fieldName="dateOfBirth"
-                    fieldLabel="Date of Birth"
-                    inputType="text"
-                    inputPlaceholder="yyyy-mm-dd"
-                  />
-                  <SiteFormField
-                    form={form}
-                    fieldName="ssn"
-                    fieldLabel="SSN"
-                    inputType="text"
-                    inputPlaceholder="ex: 1234"
-                  />
-                 </div>
-              </>
+                  <div className="flex gap-4">
+                    <SiteFormField
+                      form={form}
+                      fieldName="dateOfBirth"
+                      fieldLabel="Date of Birth"
+                      inputType="text"
+                      inputPlaceholder="yyyy-mm-dd"
+                    />
+                    <SiteFormField
+                      form={form}
+                      fieldName="ssn"
+                      fieldLabel="SSN"
+                      inputType="text"
+                      inputPlaceholder="ex: 1234"
+                    />
+                  </div>
+                </>
               )}
-
 
               <SiteFormField
                 form={form}
@@ -162,18 +197,18 @@ const AuthForm = ({ type }: AuthFormProps) => {
                 inputPlaceholder="Enter your password"
               />
               <div className="flex flex-col gap-4">
-              <Button className="form-btn" type="submit" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" /> &nbsp;
-                    Loading...
-                  </>
-                ) : type === "sign-in" ? (
-                  "Sign In"
-                ) : (
-                  "Sign Up"
-                )}
-              </Button>
+                <Button className="form-btn" type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" /> &nbsp;
+                      Loading...
+                    </>
+                  ) : type === "sign-in" ? (
+                    "Sign In"
+                  ) : (
+                    "Sign Up"
+                  )}
+                </Button>
               </div>
             </form>
           </Form>
