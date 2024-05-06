@@ -1,0 +1,17 @@
+export const SITE_URL= process.env.SITE_URL as string
+export const NEXT_PUBLIC_APPWRITE_ENDPOINT= process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT as string
+export const NEXT_PUBLIC_APPWRITE_PROJECT= process.env.NEXT_PUBLIC_APPWRITE_PROJECT as string
+export const APPWRITE_DATABASE_ID= process.env.APPWRITE_DATABASE_ID as string
+export const APPWRITE_USER_COLLECTION_ID= process.env.APPWRITE_USER_COLLECTION_ID as string
+export const APPWRITE_BANK_COLLECTION_ID= process.env.APPWRITE_BANK_COLLECTION_ID as string
+export const APPWRITE_TRANSACTION_COLLECTION_ID= process.env.APPWRITE_TRANSACTION_COLLECTION_ID as string
+export const NEXT_APPWRITE_KEY= process.env.NEXT_APPWRITE_KEY as string
+export const PLAID_CLIENT_ID= process.env.PLAID_CLIENT_ID as string
+export const PLAID_SECRET= process.env.PLAID_SECRET as string
+export const PLAID_ENV= process.env.PLAID_ENV as string
+export const PLAID_PRODUCTS= process.env.PLAID_PRODUCTS as string
+export const PLAID_COUNTRY_CODES= process.env.PLAID_COUNTRY_CODES as string
+export const DWOLLA_KEY= process.env.DWOLLA_KEY as string
+export const DWOLLA_SECRET= process.env.DWOLLA_SECRET as string
+export const DWOLLA_BASE_URL= process.env.DWOLLA_BASE_URL as string
+export const DWOLLA_ENV = process.env.DWOLLA_ENV as string
