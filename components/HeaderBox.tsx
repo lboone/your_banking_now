@@ -11,7 +11,7 @@ const HeaderBox = ({
       <h1 className="header-box-title">
         {title}
         {type === "greeting" && (
-          <span className="text-bankGradient capitalize">&nbsp;{user}</span>
+          <span className="text-bankGradient capitalize">&nbsp;{user?.split(' ').slice(0, -1).join(' ')}</span>
         )}
       </h1>
       <p className="header-box-subtext">{subtext}</p>
