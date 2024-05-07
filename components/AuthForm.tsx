@@ -87,9 +87,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
         const response = await signIn({
           email: data.email,
           password: data.password,
-        });
-        console.log(response);
-        
+        });        
         if (response) {
           router.push("/");
         }
@@ -97,7 +95,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
       setIsLoading(false);
     } catch (error) {
-      console.log(error.message);
+      console.log('Error in sign up or sign in',error.message);
     } finally {
       setIsLoading(false);
     }
